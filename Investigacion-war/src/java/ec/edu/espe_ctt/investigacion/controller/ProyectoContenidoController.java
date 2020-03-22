@@ -127,15 +127,11 @@ import ec.edu.espe_ctt_investigacion.session.VDocenteInvestigacionFacade;
 import ec.edu.espe_ctt_investigacion.session.VEstudiantesBFacade;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import static java.io.File.separatorChar;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -249,6 +245,7 @@ public class ProyectoContenidoController implements Serializable {
 
     private boolean validaVaciosP9 = true;
     private boolean controlGrabarP9 = false;
+    private boolean validaFechaPlazoEjecucion = false;
     private String nomFile2 = "";
 //    private SeaDatGeneralProy datGenProyeSelected;xxx
     private StreamedContent fileLegal;
@@ -414,8 +411,7 @@ public class ProyectoContenidoController implements Serializable {
     private boolean validaVaciosP62 = true;
     private boolean validaVaciosP63 = true;
     private boolean validaVaciosP64 = true;
-    private boolean controlGrabarP61 = false;
-    private boolean controlGrabarP62 = false;
+    private boolean controlGrabarP61 = false;  
     private boolean controlGrabarP63 = false;
     private boolean controlGrabarP64 = false;
 
@@ -577,7 +573,7 @@ public class ProyectoContenidoController implements Serializable {
             }
             cargaDatosProyecto();
 
-        } else {
+        } else {//NUEVO
             //notaConceptualSelected = new SeaDatGeneralProy();
             permitirEdicionPerfil = true;
             proyectoSelected = new SeaFormatoLargo();
@@ -646,6 +642,8 @@ public class ProyectoContenidoController implements Serializable {
         categoriaList = paramDetFacade.findParamDetCategoProy();
     }
 
+    
+    //Cuando un proyecto fue seleccionado.
     public void cargaDatosProyecto() {
         permitirEdicionPerfil = false;
         proyectoSelected = proyectoFacade.findIdFormatoByCodPro(idNotaConceptualSelected);
@@ -670,7 +668,7 @@ public class ProyectoContenidoController implements Serializable {
 
         convocaProy = proyectoSelected.getDatgeproyId().getConvocaId().getConvocaId().toString();
         progInvestiga = proyectoSelected.getDatgeproyId().getProgId().getProgId().toString();
-        tituloProy = proyectoSelected.getDatgeproyId().getDatgeproyTitulo();
+        //tituloProy = proyectoSelected.getDatgeproyId().getDatgeproyTitulo();
         tipologia = proyectoSelected.getDatgeproyId().getPrdId().getPrdId().toString();
         resultEsProy = proyectoSelected.getDatgeproyId().getDatgeproyResultadoEspera();
         metodProy = proyectoSelected.getDatgeproyId().getDatgeproyMetodologia();
@@ -798,7 +796,7 @@ public class ProyectoContenidoController implements Serializable {
         convocaProy = convocaProy.trim();
         progInvestiga = progInvestiga.trim();
         tipologia = tipologia.trim();
-        tituloProy = tituloProy.trim();
+        tituloProy = proyectoSelected.getDatgeproyId().getDatgeproyTitulo();
         /*if (duracionProyecto != null) {
             duracionProyecto = duracionProyecto.trim();
         }*/
@@ -812,7 +810,9 @@ public class ProyectoContenidoController implements Serializable {
         if (tipologia.isEmpty()) {
             validaVaciosP1 = true;
         }
-        if (tituloProy.isEmpty()) {
+        if (tituloProy == null) {
+            validaVaciosP1 = true;
+        }else if(tituloProy.isEmpty()){
             validaVaciosP1 = true;
         }
         /*if (duracionProyecto == null || duracionProyecto.isEmpty()) {
@@ -845,34 +845,38 @@ public class ProyectoContenidoController implements Serializable {
         validarVaciosP1();
     }
 
-    public void registraP1() {
+    public String registraP1() {
         try {
             fechActual = new Date();
             procesoXConv = procesoXConvocatoriaFacade.findProcesoXConvByCodCon(new BigDecimal(convocaProy));
 
             if (procesoXConv == null) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No sehan definido fechas de procesos para esta convocatoria"));
-                return;
+                return "";
             }
             fechaPresConv = procesoXConv.getPpcFecifin();
-            SeaConvoca convocaProyecto = new SeaConvoca();
-            convocaProyecto.setConvocaId(new BigDecimal(convocaProy));
             if (fechActual.before(fechaPresConv)) {
+                
                 programaInvestigacion = new SeaPrograma();
                 programaInvestigacion.setProgId(new BigDecimal(progInvestiga));
                 parametrosDet = new SeaParametrosDet();
-                parametrosDet.setPrdId(new Long(tipologia));
-                proyectoSelected.getDatgeproyId().setDatgeproyTitulo(tituloProy);
-                if (proyectoSelected.getDatgeproyId().getDatgeproyId() == null) {
-                    proyectoSelected.getDatgeproyId().setProgId(programaInvestigacion);
-                    System.out.println(" ingresa registro");
+                parametrosDet.setPrdId(new Long(tipologia));   
+                
+                proyectoSelected.getDatgeproyId().setPrdId(parametrosDet);           
+                proyectoSelected.getDatgeproyId().setProgId(programaInvestigacion);
+                 
+                
+                if (proyectoSelected.getDatgeproyId().getDatgeproyId() == null) { //Nuevo Proyecto
+                    SeaConvoca convocaProyecto2 = new SeaConvoca();
+                    convocaProyecto2.setConvocaId(new BigDecimal(convocaProy));
+
+                    //System.out.println(" ingresa registro");
                     //datGeneralProy.setTipinveId(tipoInvestigacion);
 
                     proyectoSelected.getDatgeproyId().setDatgeproyTiempoEjecucion(duracionProyecto);
                     proyectoSelected.getDatgeproyId().setDatgeproyFechaCreacion(fechActual);
-                    proyectoSelected.getDatgeproyId().setConvocaId(convocaProyecto);
-                    proyectoSelected.getDatgeproyId().setPrdId(parametrosDet);
-                    proyectoSelected.getDatgeproyId().setProgId(programaInvestigacion);
+                    proyectoSelected.getDatgeproyId().setConvocaId(convocaProyecto2);
+          
                     proyectoSelected.getDatgeproyId().setUsuId(usuarioActual);
                     //notaConceptualFacade.create(notaConceptualSelected);
                     //proyectoSelected.setDatgeproyId(notaConceptualSelected);
@@ -880,8 +884,8 @@ public class ProyectoContenidoController implements Serializable {
                     idNotaConceptualSelected = proyectoSelected.getDatgeproyId().getDatgeproyId();
                     inicializarDatosProyectoNuevo();
                     cargaDatosTabsProyecto();
-                    convocaId = proyectoSelected.getDatgeproyId().getConvocaId().getConvocaId();
-                    convocatoriaList = convocaFacade.findDatosConvocatoria();
+                    //convocaId = proyectoSelected.getDatgeproyId().getConvocaId().getConvocaId();
+                    //convocatoriaList = convocaFacade.findDatosConvocatoria();
                 } else {
                     if (proyectoSelected.getObjetivoList() == null || proyectoSelected.getObjetivoList().isEmpty()) {
                         proyectoSelected.addObjetivoProyecto(new ObjetivoProyecto(proyectoSelected, new SeaParametrosDet(SeaParametrosDet.TIPO_OBJETIVO_FIN), 1));
@@ -895,14 +899,15 @@ public class ProyectoContenidoController implements Serializable {
             } else {
                 RequestContext.getCurrentInstance().execute("alert('La Fecha de Presentación de la Nota Conceptual ha Caducado')");
                 cancelarP1();
-                return;
+                return "";
             }
             if (getSelectedNodeCode().equals("1.1")) {
                 crearArbolMenu();
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
+            
         } catch (Exception e) {
-            try {
+           
                 Throwable t = (Throwable) e;
                 while (t.getCause() != null) {
                     t = t.getCause();
@@ -914,9 +919,10 @@ public class ProyectoContenidoController implements Serializable {
                     msgError = "La información está desactualizada porque otro usuario ha modificado antes que usted. Por favor ingrese nuevamente a la opción del menú e ingrese nuevamente la información requerida. ";
                 }
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", msgError));
-            } catch (Exception e2) {
-            }
+                return "";
+            
         }
+        return "";
     }
 
     //funciones tab p2
@@ -1317,7 +1323,7 @@ public class ProyectoContenidoController implements Serializable {
         carrera = carrera.trim();
         programaPost = programaPost.trim();
         //numConvocat = numConvocat.trim();
-        sublinea = sublinea.trim();
+        //sublinea = sublinea.trim();
         grupoInvest = grupoInvest.trim();
 
         if (centroResp.isEmpty()) {
@@ -1332,9 +1338,9 @@ public class ProyectoContenidoController implements Serializable {
         /*if (numConvocat.isEmpty()) {
          validaVaciosP3 = true;
          }*/
-        if (sublinea.isEmpty()) {
-            validaVaciosP3 = true;
-        }
+//        if (sublinea.isEmpty()) {
+//            validaVaciosP3 = true;
+//        }
         if (grupoInvest.isEmpty()) {
             validaVaciosP3 = true;
         }
@@ -1354,8 +1360,9 @@ public class ProyectoContenidoController implements Serializable {
 
         progPostgrado = new SeaProgPostgrado();
         progPostgrado.setPostprogId(new BigDecimal(programaPost));
+        //Solo se guarda la sublinea o linea porque apartir de ai se puede conocer el otro osea el padre.
         lineaInvestigacion = new SeaLineainves();
-        lineaInvestigacion.setLineaId(new BigDecimal(sublinea));
+        lineaInvestigacion.setLineaId(new BigDecimal(lineaInvst));
         grupoInvestiga = new SeaGrupinv();
         grupoInvestiga.setGrupiId(new BigDecimal(grupoInvest));
 
@@ -1448,39 +1455,39 @@ public class ProyectoContenidoController implements Serializable {
     /// funciones tab4
     public void nuevoInstitucionParticipante() {
         controlGrabarP4 = true;
-        this.opcionInstSelected = new SeaOpcionInstitucion();
+        opcionInstSelected = new SeaOpcionInstitucion();
     }
 
     public boolean validarVaciosP4() {
         validaVaciosP4 = false;
-        if (opcionInstSelected.getOpinstiRepresentaLegal().isEmpty()) {
+        if (opcionInstSelected.getOpinstiRepresentaLegal() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiCedulaRl().isEmpty()) {
+        if (opcionInstSelected.getOpinstiCedulaRl() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiTelefono().isEmpty()) {
+        if (opcionInstSelected.getOpinstiTelefono() == null) {
             validaVaciosP4 = true;
         }
 //        if (fax.isEmpty()) {
 //            validaVaciosP4 = true;
 //        }
-        if (opcionInstSelected.getOpinstiMail().isEmpty()) {
+        if (opcionInstSelected.getOpinstiMail() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiDireccion().isEmpty()) {
+        if (opcionInstSelected.getOpinstiDireccion() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiCiudad().isEmpty()) {
+        if (opcionInstSelected.getOpinstiCiudad() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiPaguinaWeb().isEmpty()) {
+        if (opcionInstSelected.getOpinstiPaguinaWeb() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiOrganoEjecutor().isEmpty()) {
+        if (opcionInstSelected.getOpinstiOrganoEjecutor() == null) {
             validaVaciosP4 = true;
         }
-        if (opcionInstSelected.getOpinstiNombre().isEmpty()) {
+        if (opcionInstSelected.getOpinstiNombre() == null) {
             validaVaciosP4 = true;
         }
 //        if (programaInvest.isEmpty()) {
@@ -1490,40 +1497,47 @@ public class ProyectoContenidoController implements Serializable {
     }
 
     public String registraInstitucionParticipante() throws ParseException {
-        Date fecha = new Date();
+        try {
+            Date fecha = new Date();
 
-        //// validar email
-        //Pattern patronEmail = Pattern.compile("^([0-9a-zA-Z]([_.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z]{2,9}.)+([a-zA-Z]{2,9}.)+[a-zA-Z]{2,3})$");
-        Pattern patronEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-        Matcher mEmail = patronEmail.matcher(opcionInstSelected.getOpinstiMail());
-        //check whether match is found 
-        boolean matchFound = mEmail.matches();
-        if (matchFound) {
-            if (opcionInstSelected.getOpinstiId() == null) {
-                datosOrdenList = opcionInstitucionFacade.findOrdenByProyecto(proyectoSelected.getDatgeproyId().getDatgeproyId());
+            //// validar email
+            //Pattern patronEmail = Pattern.compile("^([0-9a-zA-Z]([_.w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-w]*[0-9a-zA-Z]{2,9}.)+([a-zA-Z]{2,9}.)+[a-zA-Z]{2,3})$");
+            Pattern patronEmail = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Matcher mEmail = patronEmail.matcher(opcionInstSelected.getOpinstiMail());
+            //check whether match is found 
+            boolean matchFound = mEmail.matches();
+            if (matchFound) {
+                if (opcionInstSelected.getOpinstiId() == null) {
+                    datosOrdenList = opcionInstitucionFacade.findOrdenByProyecto(proyectoSelected.getDatgeproyId().getDatgeproyId());
 
-                if (datosOrdenList != null) {
-                    ordenInstitucion = datosOrdenList.size() + 1;
-                    ordenInstit = Integer.toString(ordenInstitucion);
+                    if (datosOrdenList != null) {
+                        ordenInstitucion = datosOrdenList.size() + 1;
+                        ordenInstit = Integer.toString(ordenInstitucion);
+                    } else {
+                        ordenInstitucion = 1;
+                        ordenInstit = Integer.toString(ordenInstitucion);
+                    }
+                    opcionInstSelected.setOpinstiFechaCrea(new Timestamp(fecha.getTime()));
+                    opcionInstSelected.setOpinstiOrden(new BigInteger(ordenInstit));
+                    opcionInstSelected.setDatgeproyId(proyectoSelected.getDatgeproyId());
+                    opcionInstitucionFacade.create(opcionInstSelected);
                 } else {
-                    ordenInstitucion = 1;
-                    ordenInstit = Integer.toString(ordenInstitucion);
+                    opcionInstitucionFacade.edit(opcionInstSelected);
                 }
-                opcionInstSelected.setOpinstiFechaCrea(new Timestamp(fecha.getTime()));
-                opcionInstSelected.setOpinstiOrden(new BigInteger(ordenInstit));
-                opcionInstSelected.setDatgeproyId(proyectoSelected.getDatgeproyId());
-                opcionInstitucionFacade.create(opcionInstSelected);
-            } else {
-                opcionInstitucionFacade.edit(opcionInstSelected);
-            }
 
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "La dirección de correo no es válida"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "La dirección de correo no es válida"));
+                return "";
+            }
+            validaVaciosP4 = true;
+            cancelarInstitucionesParticipantes();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
+            return "";
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un problema al tratar de registrar la información"));
             return "";
         }
-        validaVaciosP4 = true;
-        cancelarInstitucionesParticipantes();
-        return "";
+
     }
 
     public void cancelarInstitucionesParticipantes() {
@@ -1603,20 +1617,24 @@ public class ProyectoContenidoController implements Serializable {
     }
 
     public void registraP62() {
-        System.out.println(" registra 62");
+        //System.out.println(" registra 62");
+        try {
+            proyectoSelected.getDatgeproyId().setDatgeproyResultadoEspera(resultEsProy);
+            proyectoSelected.getDatgeproyId().setDatgeproyPlantNombre(nomFile3);
+            //objetivosProyFacade.edit(notaConceptualSelected);
+            
+            proyectoSelected.getDatgeproyId().setDatgeproyPlanDigi(file31);
+            //objetivosProyFacade.edit(notaConceptualSelected);
+            
+            proyectoSelected.getDatgeproyId().setDatgeproyMetodologia(metodProy);
+            //objetivosProyFacade.edit(notaConceptualSelected);
+            proyectoFacade.edit(proyectoSelected);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
+            cancelarP62();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un problema al tratar de registrar la información"));
+        }
 
-        proyectoSelected.getDatgeproyId().setDatgeproyResultadoEspera(resultEsProy);
-        proyectoSelected.getDatgeproyId().setDatgeproyPlantNombre(nomFile3);
-        //objetivosProyFacade.edit(notaConceptualSelected);
-        proyectoFacade.edit(proyectoSelected);
-        proyectoSelected.getDatgeproyId().setDatgeproyPlanDigi(file31);
-        //objetivosProyFacade.edit(notaConceptualSelected);
-        proyectoFacade.edit(proyectoSelected);
-        proyectoSelected.getDatgeproyId().setDatgeproyMetodologia(metodProy);
-        //objetivosProyFacade.edit(notaConceptualSelected);
-        proyectoFacade.edit(proyectoSelected);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "El registro ha sido eliminado exitosamente"));
-        cancelarP62();
     }
 
     public void handleFileUpload3(FileUploadEvent event) throws IOException {
@@ -1681,10 +1699,15 @@ public class ProyectoContenidoController implements Serializable {
     }
 
     public void registraP63() {
-        System.out.println(" registra 63");
+        //System.out.println(" registra 63");
         //objetivosProyFacade.edit(notaConceptualSelected);
-        proyectoFacade.edit(proyectoSelected);
-        cancelarP63();
+        try {
+            proyectoFacade.edit(proyectoSelected);
+            cancelarP63();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un problema al tratar de registrar la información"));
+        }
     }
 
     public void registraP64() {
@@ -1827,7 +1850,7 @@ public class ProyectoContenidoController implements Serializable {
 
         if (proyectoSelected.getDatgeproyId().getDatgeproyConsideraciones() == null) {
             validaVaciosP63 = true;
-        } else if (proyectoSelected.getDatgeproyId().getDatgeproyConsideraciones().equals("")) {
+        } else if (proyectoSelected.getDatgeproyId().getDatgeproyConsideraciones().isEmpty()) {
             validaVaciosP63 = true;
         }
         /*if (proyectoSelected.getDatgeproyId().getDatgeproyMonitoreoEvalua() == null) {
@@ -1837,12 +1860,12 @@ public class ProyectoContenidoController implements Serializable {
         }*/
         if (proyectoSelected.getDatgeproyId().getDatgeproyConsecuencias() == null) {
             validaVaciosP63 = true;
-        } else if (proyectoSelected.getDatgeproyId().getDatgeproyConsecuencias().equals("")) {
+        } else if (proyectoSelected.getDatgeproyId().getDatgeproyConsecuencias().isEmpty()) {
             validaVaciosP63 = true;
         }
         return validaVaciosP63;
     }
-
+    
     public boolean validarVaciosP64() {
         validaVaciosP64 = false;
         if (proyectoSelected.getDatgeproyId().getDatgeproyTransferResult() == null) {
@@ -1873,13 +1896,13 @@ public class ProyectoContenidoController implements Serializable {
 
     public void cancelarP62() {
         ///inicializar variables de entrada
-        controlGrabarP62 = false;
+       
         validaVaciosP62 = true;
     }
 
     public void cancelarP63() {
         ///inicializar variables de entrada
-        controlGrabarP63 = false;
+        //controlGrabarP63 = false;
         validaVaciosP63 = true;
     }
 
@@ -2969,13 +2992,7 @@ public class ProyectoContenidoController implements Serializable {
         this.controlGrabarP61 = controlGrabarP61;
     }
 
-    public boolean isControlGrabarP62() {
-        return controlGrabarP62;
-    }
-
-    public void setControlGrabarP62(boolean controlGrabarP62) {
-        this.controlGrabarP62 = controlGrabarP62;
-    }
+   
 
     public boolean isControlGrabarP63() {
         return controlGrabarP63;
@@ -3772,7 +3789,7 @@ public class ProyectoContenidoController implements Serializable {
             //TreeNode node1_2 = new DefaultTreeNode(new OpcionMenu("1.2", "1.2. Areas de Investigación"), node1);
             TreeNode node3 = new DefaultTreeNode(new OpcionMenu("3", "2. Datos de Departamento/Centro"), menuPerfil);
             TreeNode node2 = new DefaultTreeNode(new OpcionMenu("2", "3. Localización Geográfica"), menuPerfil);
-            TreeNode node15 = new DefaultTreeNode(new OpcionMenu("14", "4. Objetivos del Plan Nacional del Buen Vivir"), menuPerfil);
+            TreeNode node15 = new DefaultTreeNode(new OpcionMenu("14", "4. Objetivos del Plan Nacional de Desarrollo"), menuPerfil);
             TreeNode node16 = new DefaultTreeNode(new OpcionMenu("15", "5. Areas de Conocimiento"), menuPerfil);
             TreeNode node4 = new DefaultTreeNode(new OpcionMenu("4", "6. Instituciones Participantes"), menuPerfil);
             TreeNode node17 = new DefaultTreeNode(new OpcionMenu("16", "7. Monto"), menuPerfil);
@@ -4142,14 +4159,12 @@ public class ProyectoContenidoController implements Serializable {
         return "";
     }
 
-    private boolean validaVaciosPlazoEjecucuion;
-
-    public boolean isValidaVaciosPlazoEjecucuion() {
-        return validaVaciosPlazoEjecucuion;
+    public boolean isValidaFechaPlazoEjecucion() {
+        return validaFechaPlazoEjecucion;
     }
 
-    public void setValidaVaciosPlazoEjecucuion(boolean validaVaciosPlazoEjecucuion) {
-        this.validaVaciosPlazoEjecucuion = validaVaciosPlazoEjecucuion;
+    public void setValidaFechaPlazoEjecucion(boolean validaFechaPlazoEjecucion) {
+        this.validaFechaPlazoEjecucion = validaFechaPlazoEjecucion;
     }
 
     private String paramEstado;
@@ -4176,10 +4191,23 @@ public class ProyectoContenidoController implements Serializable {
         /*SeaParametrosDet parametrosDetalle = new SeaParametrosDet();
         parametrosDetalle.setPrdId(new Long(paramEstado));
         proyectoSelected.setPrdId(parametrosDetalle);*/
-        proyectoFacade.edit(proyectoSelected);
-        proyectoList = proyectoFacade.findFormatoByCodPro(idNotaConceptualSelected);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
-        cancelarPlazoEjecucion();
+        validaFechaPlazoEjecucion = false;
+        try {
+            if (!proyectoSelected.getSflFechaInicio().before(proyectoSelected.getSflFechaFinaliza())) {
+                validaFechaPlazoEjecucion = true;
+            }
+            if (!validaFechaPlazoEjecucion) {
+                proyectoFacade.edit(proyectoSelected);
+                proyectoList = proyectoFacade.findFormatoByCodPro(idNotaConceptualSelected);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "La información se guardó exitosamente"));
+                cancelarPlazoEjecucion();
+
+            }
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un problema al tratar de registrar la información"));
+        }
+
     }
 
     public void cancelarPlazoEjecucion() {
@@ -4187,7 +4215,7 @@ public class ProyectoContenidoController implements Serializable {
         proyectoList = new ArrayList<>();
         proyectoList.add(proyectoSelected);
         paramEstado = "";
-        validaVacios = true;
+        validaFechaPlazoEjecucion = false;
         modoEdicion = false;
     }
     private List<SeaParametrosDet> paramDetPlazoEjecList;
@@ -4201,30 +4229,6 @@ public class ProyectoContenidoController implements Serializable {
     }
     @EJB
     private SeaParametrosDetFacade paramDetFacade;
-
-    public boolean validarVaciosPlazoEjecucion() {
-        validaVacios = false;
-        if (proyectoSelected.getSflFechaPresenta() == null) {
-            validaVacios = true;
-        }
-        if (proyectoSelected.getSflFechaInicio() == null) {
-            validaVacios = true;
-        }
-        if (proyectoSelected.getSflFechaFinaliza() == null) {
-            validaVacios = true;
-        }
-        return validaVacios;
-    }
-
-    private boolean validaVacios;
-
-    public boolean isValidaVacios() {
-        return validaVacios;
-    }
-
-    public void setValidaVacios(boolean validaVacios) {
-        this.validaVacios = validaVacios;
-    }
 
     public void registraDiagnisticoProblema() {
         try {
@@ -4463,6 +4467,7 @@ public class ProyectoContenidoController implements Serializable {
         proyectoSelected = proyectoFacade.findIdFormatoByCodPro(idNotaConceptualSelected);
         proyectoList = new ArrayList<>();
         proyectoList.add(proyectoSelected);
+        
         modoEdicion = false;
     }
 

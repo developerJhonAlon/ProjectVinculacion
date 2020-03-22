@@ -23,8 +23,7 @@ SEA_CONVOCA.CONVOCA_CODIGO AS NUMERO_CONVOCATORIA,
        SEA_GRUPINV.GRUPI_DESCRIP AS GRUPO_INVESTIGACION,
        SEA_PROG_POSTGRADO.POSTPROG_DESCRIP AS PROGRAMA_POSTGRADO,
        SEA_PROGRAMA.PROG_DESCRIP AS NOMBRE_PROGRAMA,
-       SUBLINEA.LINEA_DESCIP AS SUBLINEA,
-       LINEA.LINEA_DESCIP AS LINEA,
+       SUBLINEA.LINEA_DESCIP AS LINEA,
        SEA_PARAMETROS_DET.PRD_DESCRIPCION AS TIPO_INVESTIGACION,
        SEA_FORMATO_LARGO.SFL_PRESUP_RIESGO AS PRESUPUESTO_RIESGO,
        SEA_FORMATO_LARGO.SFL_PRESUP_ESPE AS PRESUPUESTO_ESPE,
@@ -45,7 +44,6 @@ SEA_DAT_GENERAL_PROY.DATGEPROY_ID
        SEA_GRUPINV,
        SEA_PROG_POSTGRADO,
        SEA_PROGRAMA,
-       SEA_LINEAINVES SUBLINEA,
        SEA_LINEAINVES LINEA,
        SEA_PARAMETROS_DET,
        SEA_PARAMETROS_DET CATEGORIZACION
@@ -58,8 +56,7 @@ SEA_DAT_GENERAL_PROY.DATGEPROY_ID
        AND (SEA_DEPCENPROY.GRUPI_ID = SEA_GRUPINV.GRUPI_ID)
        AND (SEA_DEPCENPROY.POSTPROG_ID = SEA_PROG_POSTGRADO.POSTPROG_ID)
        AND (SEA_DAT_GENERAL_PROY.PROG_ID = SEA_PROGRAMA.PROG_ID)
-       AND (SEA_DEPCENPROY.LINEA_ID = SUBLINEA.LINEA_ID)
-       AND (LINEA.LINEA_ID = SUBLINEA.LINEA_ID_PADRE)
+       AND (SEA_DEPCENPROY.LINEA_ID = LINEA.LINEA_ID)
        AND (SEA_DAT_GENERAL_PROY.PRD_ID = SEA_PARAMETROS_DET.PRD_ID)
        AND(SEA_FORMATO_LARGO.PRD_ID_CATEGORIA = CATEGORIZACION.PRD_ID)
        AND (SEA_FORMATO_LARGO.SFL_ID = $P{SFL_ID})]]>
@@ -74,7 +71,6 @@ SEA_DAT_GENERAL_PROY.DATGEPROY_ID
 	<field name="GRUPO_INVESTIGACION" class="java.lang.String"/>
 	<field name="PROGRAMA_POSTGRADO" class="java.lang.String"/>
 	<field name="NOMBRE_PROGRAMA" class="java.lang.String"/>
-	<field name="SUBLINEA" class="java.lang.String"/>
 	<field name="LINEA" class="java.lang.String"/>
 	<field name="TIPO_INVESTIGACION" class="java.lang.String"/>
 	<field name="PRESUPUESTO_RIESGO" class="java.math.BigDecimal"/>
@@ -286,18 +282,6 @@ Responsable:]]></text>
 					<textFieldExpression><![CDATA[$F{GRUPO_INVESTIGACION}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="260" y="233" width="295" height="22" uuid="a29a84d4-f760-43db-ac11-82916a45627c"/>
-					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
-						<topPen lineWidth="0.25"/>
-						<leftPen lineWidth="0.25"/>
-						<rightPen lineWidth="0.25"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[Sublínea de Investigación:]]></text>
-				</staticText>
-				<staticText>
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="233" width="260" height="22" uuid="5eb37aa6-3950-4670-9dce-e2afdeb1f781"/>
 					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
 						<topPen lineWidth="0.25"/>
@@ -318,17 +302,6 @@ Responsable:]]></text>
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{LINEA}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="260" y="255" width="295" height="20" uuid="e3073f0b-de88-4996-9798-0c10afe5531a"/>
-					<box topPadding="2" leftPadding="5" bottomPadding="2" rightPadding="5">
-						<leftPen lineWidth="0.25"/>
-						<rightPen lineWidth="0.25"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{SUBLINEA}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement positionType="Float" x="0" y="275" width="555" height="22" uuid="3b604969-e984-41d8-8cb9-8fb4cc32e7b7"/>

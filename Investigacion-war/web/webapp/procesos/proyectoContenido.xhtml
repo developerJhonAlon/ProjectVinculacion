@@ -93,7 +93,7 @@ and open the template in the editor.
                                         <h:panelGrid columns="1" cellpadding="7" id="h1">
                                             <p:commandButton id="btnGrabarP1" value="Grabar" icon="ui-icon-locked" style="margin: 0 ; font-size: 11px; float: left" disabled="#{proyectoContenidoController.validaVaciosP1}" 
                                                              onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"
-                                                             title="Graba Información" update=":formPrincipal:tabP:panelMenuPerfil, :formPrincipal:tabP:panelCentral, :formPrincipal:message1"  action="#{proyectoContenidoController.registraP1()}">
+                                                             title="Graba Información" update=":formPrincipal:tabP:panelMenuPerfil,:formPrincipal:tabP:panelCentral,:formPrincipal:message1"  action="#{proyectoContenidoController.registraP1()}">
                                             </p:commandButton>
                                         </h:panelGrid>
                                         <h:outputText value="DATOS GENERALES" style="text-align: left;font-size: small"/>
@@ -119,7 +119,7 @@ and open the template in the editor.
                                                 <p:ajax event="change" update=":formPrincipal:tabP:btnGrabarP1" listener="#{proyectoContenidoController.validarVaciosP1}"/>
                                             </p:selectOneRadio>
                                             <h:outputLabel  for="tProy" value="Título del Proyecto:"/>
-                                            <p:inputTextarea id="tProy" value="#{proyectoContenidoController.tituloProy}" required="false" style="width: 100%"
+                                            <p:inputTextarea id="tProy" value="#{proyectoContenidoController.proyectoSelected.datgeproyId.datgeproyTitulo}" required="false" style="width: 100%"
                                                              disabled="#{!proyectoContenidoController.permitirEdicionPerfil}"  rows="3">
                                                 <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP1" listener="#{proyectoContenidoController.validarVaciosP1}"/>
                                             </p:inputTextarea>
@@ -333,14 +333,14 @@ and open the template in the editor.
                                                 <p:selectOneMenu id="lineaIn" value="#{proyectoContenidoController.lineaInvst}" required="false" style="width: 450px; text-align: left">
                                                     <f:selectItem itemLabel="Seleccione Línea" itemValue="" noSelectionOption="true"/>
                                                     <f:selectItems value="#{proyectoContenidoController.lineaInvestList}" var="lin" itemLabel="#{lin.lineaDescip}" itemValue="#{lin.lineaId}"/>
-                                                    <p:ajax event="change" update=":formPrincipal:tabP:sublinea" listener="#{proyectoContenidoController.onSublineaChange}"/>
+<!--                                                    <p:ajax event="change" update=":formPrincipal:tabP:sublinea" listener="#{proyectoContenidoController.onSublineaChange}"/>-->
                                                 </p:selectOneMenu>
-                                                <p:outputLabel for="sublinea" value="Sub Línea:" />
+<!--                                                <p:outputLabel for="sublinea" value="Sub Línea:" />
                                                 <p:selectOneMenu id="sublinea" value="#{proyectoContenidoController.sublinea}" required="false" style="width: 450px; text-align: left">
                                                     <f:selectItem itemLabel="Seleccione Sub Línea" noSelectionOption="true"/>
                                                     <f:selectItems value="#{proyectoContenidoController.sublineaList}" var ="subl" itemLabel="#{subl.lineaUnesco}  #{subl.lineaDescip}" itemValue="#{subl.lineaId}"/>
                                                     <p:ajax event="change" update=":formPrincipal:tabP:btnGrabarP3" listener="#{proyectoContenidoController.validarVaciosP3}"/>
-                                                </p:selectOneMenu>
+                                                </p:selectOneMenu>-->
                                                 <p:outputLabel for="grupInvest" value="Grupos de Investigación Asociados: (Op)" /> 
                                                 <p:selectOneMenu id="grupInvest" value="#{proyectoContenidoController.grupoInvest}" required="false" style="width: 450px; text-align: left">
                                                     <f:selectItem itemLabel="Seleccione Grupo de Investigación" noSelectionOption="true"/>
@@ -387,7 +387,7 @@ and open the template in the editor.
                                                     </f:facet>
                                                 </p:cellEditor>
                                             </p:column>
-                                            <p:column headerText="Sub Línea " style="width: 10%;white-space: pre-line">
+                                            <p:column headerText="Línea" style="width: 10%;white-space: pre-line">
                                                 <h:outputText value="#{departCent.lineaId.lineaUnesco} #{departCent.lineaId.lineaDescip}" style="text-transform: uppercase; font-size: xx-small"/>
                                             </p:column>
                                             <p:column headerText="Grupos de Investigación Asociados" style="width: 10%;white-space: pre-line">
@@ -426,9 +426,9 @@ and open the template in the editor.
                                         </h:panelGrid>
                                         <p:panel id="p4" rendered="#{proyectoContenidoController.opcionInstSelected!=null}" style="font-size: 11px; text-align: left; border: hidden; font-weight: bold">
                                             <h:panelGrid columns="2" cellpadding="5">
-                                                <p:commandButton id="btnGrabarP4" value="Grabar" icon="ui-icon-locked" style="margin: 0; font-size: 11px; float: left " disabled="#{proyectoContenidoController.validaVaciosP4}"
+                                                <p:commandButton id="btnGrabarP4" value="Grabar" icon="ui-icon-locked" style="margin: 0; font-size: 11px; float: left "
                                                                  onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"
-                                                                 title="Graba Información" update=":formPrincipal:tabP:panelInstitucionesParticipantes, :formPrincipal:message1" action="#{proyectoContenidoController.registraInstitucionParticipante()}">
+                                                                 title="Graba Información" update=":formPrincipal:tabP:panelInstitucionesParticipantes,:formPrincipal:message1" action="#{proyectoContenidoController.registraInstitucionParticipante()}">
                                                 </p:commandButton>
                                                 <p:commandButton id="btnCancelarP4" value="Cancelar" icon="ui-icon-arrowreturnthick-1-w" style="margin: 0; font-size: 11px; float: left "
                                                                  onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"
@@ -436,56 +436,58 @@ and open the template in the editor.
                                                 </p:commandButton> 
                                             </h:panelGrid>
                                             <h:panelGrid columns="1" cellpadding="5" cellspacing="0" id="pInput4">
-                                                <h:panelGrid columns="2" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
+                                                <h:panelGrid columns="3" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
                                                     <p:outputLabel for="nomInst" value="* Nombre Institución Co-Ejecutora:" /> 
-                                                    <p:inputText id="nomInst" value="#{proyectoContenidoController.opcionInstSelected.opinstiNombre}" autocomplete="off" required="false" size="100" maxlength="100">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="nomInst" value="#{proyectoContenidoController.opcionInstSelected.opinstiNombre}" autocomplete="off" size="100" maxlength="100" 
+                                                                  required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>                
+                                                    <p:message for="nomInst"/>
                                                 </h:panelGrid>
-                                                <h:panelGrid columns="4" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
+                                                <h:panelGrid columns="6" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
                                                     <p:outputLabel for="repreL" value="* Representante Legal:" /> 
-                                                    <p:inputText id="repreL" value="#{proyectoContenidoController.opcionInstSelected.opinstiRepresentaLegal}" autocomplete="off" required="false" size="50" maxlength="50">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="repreL" value="#{proyectoContenidoController.opcionInstSelected.opinstiRepresentaLegal}" autocomplete="off" size="50" maxlength="50"
+                                                        required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                    <p:message for="repreL"/>
+                                                    
                                                     <p:outputLabel for="identif" value="* Cédula/Dni/Pasaporte:" style="white-space: pre-line" /> 
-                                                    <p:inputText id="identif" value="#{proyectoContenidoController.opcionInstSelected.opinstiCedulaRl}" autocomplete="off" required="false">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputMask id="identif" value="#{proyectoContenidoController.opcionInstSelected.opinstiCedulaRl}" autocomplete="off" mask="9999999999"
+                                                        required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="identif"/>
 
                                                     <p:outputLabel for="telef" value="* Teléfono Convencional (593)-02-9999999:" style="white-space: pre-line" /> 
-                                                    <p:inputMask id="telef" value="#{proyectoContenidoController.opcionInstSelected.opinstiTelefono}" autocomplete="off" required="false" mask="(999)99-9999999">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputMask>
+                                                    <p:inputMask id="telef" value="#{proyectoContenidoController.opcionInstSelected.opinstiTelefono}" autocomplete="off" mask="(999)99-9999999"
+                                                        required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                    <p:message for="telef"/>
+                                                    
                                                     <p:outputLabel for="fax" value="Fax (593)-02-9999999:" /> 
-                                                    <p:inputMask id="fax" value="#{proyectoContenidoController.opcionInstSelected.opinstiFax}" autocomplete="off" required="false" mask="(999)99-9999999">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputMask>
+                                                    <p:inputMask id="fax" value="#{proyectoContenidoController.opcionInstSelected.opinstiFax}" autocomplete="off" required="false" mask="(999)99-9999999"/>
+                                                    <p:message for="fax"/>
+                                                    
                                                     <p:outputLabel for="corrE" value="* Correo Electrónico:" /> 
-                                                    <p:inputText id="corrE" value="#{proyectoContenidoController.opcionInstSelected.opinstiMail}" autocomplete="off" required="false">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="corrE" value="#{proyectoContenidoController.opcionInstSelected.opinstiMail}" autocomplete="off"
+                                                        required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="corrE"/>
 
                                                     <p:outputLabel for="ciud" value="* Ciudad:" /> 
-                                                    <p:inputText id="ciud" value="#{proyectoContenidoController.opcionInstSelected.opinstiCiudad}" autocomplete="off" required="false" maxlength="25">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="ciud" value="#{proyectoContenidoController.opcionInstSelected.opinstiCiudad}" autocomplete="off" maxlength="25"
+                                                       required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="ciud"/>
 
                                                 </h:panelGrid>
-                                                <h:panelGrid columns="2" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
+                                                <h:panelGrid columns="3" cellpadding="5" cellspacing="0" columnClasses="col1_institucionParticipante">
                                                     <p:outputLabel for="direc" value="* Dirección:" />
-                                                    <p:inputText id="direc" value="#{proyectoContenidoController.opcionInstSelected.opinstiDireccion}" autocomplete="off" required="false" size="100" maxlength="100">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="direc" value="#{proyectoContenidoController.opcionInstSelected.opinstiDireccion}" autocomplete="off" size="100" maxlength="100"
+                                                       required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="direc"/>
 
                                                     <p:outputLabel for="pagW" value="* Página Web Institucional:" /> 
-                                                    <p:inputText id="pagW" value="#{proyectoContenidoController.opcionInstSelected.opinstiPaguinaWeb}" autocomplete="off" required="false" size="100" maxlength="50">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="pagW" value="#{proyectoContenidoController.opcionInstSelected.opinstiPaguinaWeb}" autocomplete="off" size="100" maxlength="50"
+                                                        required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="pagW"/>
 
                                                     <p:outputLabel for="orgE" value="* Órgano Ejecutor:" /> 
-                                                    <p:inputText id="orgE" value="#{proyectoContenidoController.opcionInstSelected.opinstiOrganoEjecutor}" autocomplete="off" required="false" size="100" maxlength="200">
-                                                        <p:ajax event="keyup" update=":formPrincipal:tabP:btnGrabarP4" listener="#{proyectoContenidoController.validarVaciosP4}"/>
-                                                    </p:inputText>
+                                                    <p:inputText id="orgE" value="#{proyectoContenidoController.opcionInstSelected.opinstiOrganoEjecutor}" autocomplete="off" size="100" maxlength="200"
+                                                       required="#{not empty param['formPrincipal:tabP:btnGrabarP4']}"/>
+                                                     <p:message for="orgE"/>
 
                                                 </h:panelGrid>                                        
 
@@ -783,7 +785,7 @@ and open the template in the editor.
                                         <h:panelGrid columns="1" cellpadding="5"   >
                                             <p:commandButton id="btnGuardarP62" value="Grabar" icon="ui-icon-locked" style="margin: 0; font-size: 11px; float: left " disabled="#{proyectoContenidoController.validaVaciosP62}" 
                                                              onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"
-                                                             title="Graba Información" update=":formPrincipal:tabP:btnGuardarP62, formPrincipal:message1" action="#{proyectoContenidoController.registraP62()}"  >
+                                                             title="Graba Información" update=":formPrincipal:tabP:btnGuardarP62,:formPrincipal:message1" action="#{proyectoContenidoController.registraP62()}"  >
                                             </p:commandButton>
                                         </h:panelGrid>
                                         <right>
@@ -804,7 +806,7 @@ and open the template in the editor.
                                         <h:panelGrid columns="1" cellpadding="5"   >
                                             <p:commandButton id="btnGuardarP63" value="Grabar" icon="ui-icon-locked" style="margin: 0; font-size: 11px; float: left " disabled="#{proyectoContenidoController.validaVaciosP63}" 
                                                              onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"
-                                                             title="Graba Información" update=":formPrincipal:tabP:btnGuardarP63" action="#{proyectoContenidoController.registraP63()}"  >
+                                                             title="Graba Información" update=":formPrincipal:tabP:panelConsideracionGenero,:formPrincipal:message1" action="#{proyectoContenidoController.registraP63()}"  >
                                             </p:commandButton>
                                         </h:panelGrid>
                                         <right>
@@ -1024,7 +1026,7 @@ and open the template in the editor.
                                                             </p:commandButton>
                                                         </h:panelGrid>
                                                         <h:panelGrid columns="3" cellpadding="5" cellspacing="0">
-                                                            <p:outputLabel for="objProy" value="Objetivos del Plan Nacional del Buen Vivir"/>
+                                                            <p:outputLabel for="objProy" value="Objetivos del Plan Nacional de Desarrollo"/>
                                                             <p:selectOneMenu id="objProy" value="#{proyectoContenidoController.objetivoBuenVivirProyectoSelected.obplabvId}" 
                                                                              converter="omnifaces.SelectItemsConverter"
                                                                              required="#{not empty param['formPrincipal:tabP:btnGrabarObjetivoBuenVivir']}" style="width: 350px">
@@ -1045,7 +1047,7 @@ and open the template in the editor.
                                                 <p:column headerText="Ord." width="20" >
                                                     <h:outputText value="#{index + 1}"/>
                                                 </p:column>
-                                                <p:column headerText="Objetivo del Plan Nacional del Buen Vivir" style="white-space: pre-line">
+                                                <p:column headerText="Objetivos del Plan Nacional de Desarrollo" style="white-space: pre-line">
                                                     <h:outputText value="#{objProyL.obplabvId.obplanbvDecrip}" style="text-transform: uppercase;font-size: x-small;white-space: pre-line"/>
                                                 </p:column>
                                                 <p:column headerText="Agregar Politica" style="white-space: pre-line;text-align: center;" width="120">
@@ -1269,10 +1271,12 @@ and open the template in the editor.
                                                 </h:panelGrid>
 
                                                 <p:outputLabel for="fechFin" value="Fecha de Finalización (dd/mm/aaaa.):  "/>
-                                                <h:panelGrid columns="2">                                                
+                                                <h:panelGrid columns="3">                                                
                                                     <p:calendar id="fechFin" navigator="true" locale="es" pattern="dd/MM/yyyy"  size="10" style="font-size: 10px; text-align: center" value="#{proyectoContenidoController.proyectoSelected.sflFechaFinaliza}" yearRange="1960:2025"
                                                                 required="#{not empty param['formPrincipal:tabP:btnGrabarPlazoEjecucion']}"/>
                                                     <p:message for="fechFin"/>
+                                                    <p:outputLabel value="- Debe ser Fecha Inicio Menor que Fecha Final" style="color:red"
+                                                                   rendered="#{proyectoContenidoController.validaFechaPlazoEjecucion}"></p:outputLabel>
                                                 </h:panelGrid>
 
                                                 <p:outputLabel for="txtDuracion" value="Duración en meses:"/>
@@ -2378,7 +2382,7 @@ and open the template in the editor.
                                             </p:column>
                                             <p:column headerText="Descargar" width="80" style="text-align: center">
                                                 <p:commandButton actionListener="#{proyectoContenidoController.prepararDocumentoFinanciamientoDownload}"
-                                                                 ajax="false" icon="ui-icon-arrowthick-1-s" title="Descargar documento">
+                                                                 ajax="false" icon="ui-icon-arrowthick-1-s" title="Descargar documento" disabled="#{financ.sflNombreFinan.length()>0?false:true}" > 
                                                     <p:fileDownload value="#{proyectoContenidoController.documentoFinanciamiento}" />
                                                 </p:commandButton>
                                             </p:column>                                      
@@ -3279,7 +3283,7 @@ and open the template in the editor.
 
 
 
-                <p:dialog header="Politicas Objetivos plan Nacional del Buen Vivir" widgetVar="dialogPolitica" resizable="false" width="600" modal="true" style="font-size: 11px; text-align: left; font-weight: bold" appendTo="@(body)">
+                <p:dialog header="Politicas Objetivos Plan Nacional de Desarrollo" widgetVar="dialogPolitica" resizable="false" width="600" modal="true" style="font-size: 11px; text-align: left; font-weight: bold" appendTo="@(body)">
                     <h:form id="fmPolitOject">
                         <p:growl id="message1" widgetVar="message1" showDetail="true" life="3000"></p:growl>
                         <p:outputPanel>

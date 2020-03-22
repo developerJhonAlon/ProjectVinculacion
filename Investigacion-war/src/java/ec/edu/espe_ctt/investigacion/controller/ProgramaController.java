@@ -431,7 +431,7 @@ public class ProgramaController implements Serializable {
 
     public String registraP11() {
         lineasInvestigacion = new SeaLineainves();
-        lineasInvestigacion.setLineaId(new BigDecimal(sublinea));
+        lineasInvestigacion.setLineaId(new BigDecimal(lineaInvest));
         szdtaproglin = new Szdtaproglin();
         szdtaproglin.setLineaId(lineasInvestigacion);
         szdtaproglin.setDatgeprogId(datosGeneralesPrograma);

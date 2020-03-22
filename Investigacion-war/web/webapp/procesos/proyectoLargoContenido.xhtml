@@ -179,7 +179,7 @@
 
 
 
-                            <p:tab title="3. Objetivos del Plan Nacional del Buen Vivir" id="tabP3" disabled="#{proyectoLargoContenidoController.formatoLargo.sflId==null}">
+                            <p:tab title="3. Objetivos del Plan Nacional de Desarrollo" id="tabP3" disabled="#{proyectoLargoContenidoController.formatoLargo.sflId==null}">
                                 <h:panelGrid id="panelObjBuenVivir" style="width: 100%">
 
                                     <h:panelGrid id="panelEdicionObjBuenVivir" style="width: 100%">
@@ -206,7 +206,7 @@
                                                     </p:commandButton>
                                                 </h:panelGrid>
                                                 <h:panelGrid columns="3" cellpadding="5" cellspacing="0">
-                                                    <p:outputLabel for="objProy" value="Objetivos del Plan Nacional del Buen Vivir"/>
+                                                    <p:outputLabel for="objProy" value="Objetivos del Plan Nacional de Desarrollo"/>
                                                     <p:selectOneMenu id="objProy" value="#{proyectoLargoContenidoController.objetivoBuenVivirProyectoSelected.obplabvId}" 
                                                                      converter="omnifaces.SelectItemsConverter"
                                                                      required="#{not empty param['formPrincipal:tabP:btnGrabarP3']}" style="width: 350px">
@@ -227,7 +227,7 @@
                                         <p:column headerText="Ord." width="20" >
                                             <h:outputText value="#{index + 1}"/>
                                         </p:column>
-                                        <p:column headerText="Objetivo del Plan Nacional del Buen Vivir" style="white-space: pre-line">
+                                        <p:column headerText="Objetivo del Plan Nacional de Desarrollo" style="white-space: pre-line">
                                             <h:outputText value="#{objProyL.obplabvId.obplanbvDecrip}" style="text-transform: uppercase;font-size: x-small;white-space: pre-line"/>
                                         </p:column>
                                         <p:column headerText="Agregar Politica" style="white-space: pre-line;text-align: center;" width="120">
@@ -2172,7 +2172,7 @@
                         </p:outputPanel>
                     </h:form>
                 </p:dialog>
-                <p:dialog header="Politicas Objetivos plan Nacional del Buen Vivir" widgetVar="dialogPolitica" resizable="false" width="600" modal="true" style="font-size: 11px; text-align: left; font-weight: bold" appendTo="@(body)">
+                <p:dialog header="Politicas Objetivos Plan Nacional de Desarrollo" widgetVar="dialogPolitica" resizable="false" width="600" modal="true" style="font-size: 11px; text-align: left; font-weight: bold" appendTo="@(body)">
                     <h:form id="fmPolitOject">
                         <p:growl id="message1" widgetVar="message1" showDetail="true" life="3000"></p:growl>
                         <p:outputPanel>

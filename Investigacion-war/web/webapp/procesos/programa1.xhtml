@@ -99,14 +99,14 @@
                                             <p:selectOneMenu id="linInv" value="#{programaController.lineaInvest}" required="false" style="width: 200px">
                                                 <f:selectItem itemLabel="Seleccione Línea" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems value="#{programaController.lineasinvesList}" var="lineaI" itemLabel="#{lineaI.lineaDescip}" itemValue="#{lineaI.lineaId}"/>
-                                                <p:ajax event="change" update=":formPrincipal:tabP:subl" listener="#{programaController.onLineaChange}"/>
+<!--                                                <p:ajax event="change" update=":formPrincipal:tabP:subl" listener="#{programaController.onLineaChange}"/>-->
                                             </p:selectOneMenu>
-                                            <h:outputLabel for="subl" value="Sublíneas de Investigación Asociadas:"/>
+<!--                                            <h:outputLabel for="subl" value="Sublíneas de Investigación Asociadas:"/>
                                             <p:selectOneMenu id="subl" value="#{programaController.sublinea}" required="false" style="width: 200px">
                                                 <f:selectItem itemLabel="Seleccione Sublínea" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems value="#{programaController.sublineaList}" var="subli" itemLabel="#{subli.lineaUnesco}  #{subli.lineaDescip}" itemValue="#{subli.lineaId}"/>
                                                 <p:ajax event="change" update=":formPrincipal:tabP:btnGrabarP11" listener="#{programaController.validarVaciosP11}"/>
-                                            </p:selectOneMenu>
+                                            </p:selectOneMenu>-->
 
                                         </h:panelGrid>
                                     </left>
@@ -116,12 +116,13 @@
                                     <p:column headerText="Ord." style="width:5%">
                                         <h:outputText value="#{index + 1}" />
                                     </p:column>
-                                    <p:column headerText="Líneas de Investigación" style="width: 20%_; white-space: pre-line">
-                                        <h:outputText value="#{linProg.lineaId.lineaIdPadre.lineaDescip}" style="text-transform: uppercase; font-size: xx-small"/>
-                                    </p:column>
-                                    <p:column headerText="Sublíneas de Investigación Asociadas" style="width: 20%_; white-space: pre-line">
+                                    <p:column headerText="Líneas de Investigación" style="width: 20%; white-space: pre-line">
                                         <h:outputText value="#{linProg.lineaId.lineaDescip}" style="text-transform: uppercase; font-size: xx-small"/>
                                     </p:column>
+<!--                                    <p:column headerText="Sublíneas de Investigación Asociadas" style="width: 20%; white-space: pre-line">
+                                        <h:outputText value="#{linProg.lineaId.lineaDescip}" style="text-transform: uppercase; font-size: xx-small"/>
+                                    </p:column>-->
+                                    
                                     <p:column headerText="Eliminar" style="width: 8%; text-align: center">
                                         <p:commandButton id="btnEliminarLinea" style="margin: 0" title="Eliminar el registro" icon="ui-icon-trash" 
                                                          process="@this" update=":formPrincipal:tabP:dtTLineasProg"
@@ -153,7 +154,7 @@
                                                             
                                 -->
                             </p:tab>
-                            <p:tab title="2. Cobertura y Localización / Objetivos del Plan Nacional del Buen Vivir ">
+                            <p:tab title="2. Cobertura y Localización / Objetivos del Plan Nacional de Desarrollo">
                                 <h:panelGrid columns="1" cellpadding="5">
                                     <p:commandButton id="btnGuardarP2" value="Grabar" icon="ui-icon-locked" style="margin: 0; font-size: 11px; float: left " 
                                                      onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"

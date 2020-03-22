@@ -323,7 +323,7 @@ public class CatalogoInvestigacionController implements Serializable {
     }
 
     public void onRowToggleLine(ToggleEvent event) {
-        SeaLineainves lin = new SeaLineainves();
+        SeaLineainves lin ;
         lin = (SeaLineainves) event.getData();
         if (lin != null) {
             sublineaList = lineaInvestFacade.findSublineByLinea(lin.getLineaId());
